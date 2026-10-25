@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario | EMILIANO CLC AUTO IMPORT</title>
+    <meta name="description" content="Explora nuestro catálogo en tiempo real de vehículos importados con las mejores opciones de financiamiento y garantía.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos complementarios para la barra de filtros y paginación */
+        .currency-toggle-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            padding: 12px 20px;
+            background: var(--bg-card);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        .currency-switch {
+            display: inline-flex;
+            background: var(--bg-input);
+            border-radius: 20px;
+            padding: 3px;
+            border: 1px solid var(--border-color);
+        }
+        .currency-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-gray);
+            padding: 6px 16px;
+            border-radius: 16px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+        .currency-btn.active {
+            background: var(--red-primary);
+            color: #fff;
+            box-shadow: 0 2px 8px var(--red-glow);
+        }
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 50px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .page-btn {
+            background: var(--bg-card);
+            color: var(--text-white);
+            border: 1px solid var(--border-color);
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .page-btn:hover:not(:disabled) {
+            border-color: var(--red-primary);
+            color: var(--red-primary);
+        }
+        .page-btn.active {
+            background: var(--red-primary);
+            border-color: var(--red-primary);
+            color: #fff;
+        }
+        .page-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .vehicle-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .vehicle-footer-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-wa-icon {
+            background: #25d366;
+            color: white;
+            width: 40px;
+            height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+        .btn-wa-icon:hover {
+            background: #1eb956;
+            transform: scale(1.05);
+        }
+        .skeleton-loader {
+            background: linear-gradient(90deg, #181818 25%, #222222 50%, #181818 75%);
+            background-size: 200% 100%;
+            animation: skeleton-shimmer 1.5s infinite;
+            border-radius: 8px;
+            height: 380px;
+        }
+        @keyframes skeleton-shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header / Navbar -->
+    <header>
+        <div class="nav-container">
+            <a href="index.html" class="logo">EMILIANO <span>CLC AUTO IMPORT</span></a>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Inicio</a></li>
+                <li><a href="inventory.html" class="nav-link active">Inventario</a></li>
+            </ul>
+            <a href="https://wa.me/18098281404" target="_blank" class="btn-contact" id="navWaBtn">
+                <i class="fab fa-whatsapp"></i> Contáctanos
+            </a>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="section" style="padding-top: 120px;">
+        <div class="section-title">
+            <h2>Nuestro <span>Inventario</span></h2>
+            <p>Filtra y busca tu vehículo ideal en nuestro catálogo en tiempo real conectado al endpoint</p>
+        </div>
+
+        <!-- Caja de Filtros / Buscador -->
+        <div class="search-filter-box">
+            <form id="filterForm" class="filter-form">
+                
+                <!-- Búsqueda por texto libre -->
+                <div class="filter-group" style="grid-column: 1 / -1;">
+                    <label for="q"><i class="fa fa-search"></i> Búsqueda Rápida</label>
+                    <input type="text" name="q" id="q" class="filter-input" placeholder="Buscar por marca, modelo, equipamiento...">
+                </div>
+
+                <!-- Selector de Marca -->
+                <div class="filter-group">
+                    <label for="marca">Marca</label>
+                    <select name="marca" id="marca" class="filter-input">
+                        <option value="">Todas las marcas</option>
+                    </select>
+                </div>
+
+                <!-- Selector de Modelo dinámico -->
+                <div class="filter-group">
+                    <label for="modelo">Modelo</label>
+                    <select name="modelo" id="modelo" class="filter-input">
+                        <option value="">Todos los modelos</option>
+                    </select>
+                </div>
+
+                <!-- Selector de Tipo / Carrocería -->
+                <div class="filter-group">
+                    <label for="tipo">Carrocería / Tipo</label>
+                    <select name="tipo" id="tipo" class="filter-input">
+                        <option value="">Todos los tipos</option>
+                    </select>
+                </div>
+
+                <!-- Selector de Año -->
+                <div class="filter-group">
+                    <label for="anio">Año Mínimo</label>
+                    <select name="anio_min" id="anio_min" class="filter-input">
+                        <option value="">Cualquier año</option>
+                    </select>
+                </div>
+
+                <!-- Rango de Precios -->
+                <div class="filter-group">
+                    <label for="precio_min">Precio Mín ($)</label>
+                    <input type="number" name="precio_min" id="precio_min" class="filter-input" placeholder="0">
+                </div>
+                <div class="filter-group">
+                    <label for="precio_max">Precio Máx ($)</label>
+                    <input type="number" name="precio_max" id="precio_max" class="filter-input" placeholder="Sin límite">
+                </div>
+
+                <!-- Orden -->
+                <div class="filter-group">
+                    <label for="orden">Ordenar por</label>
+                    <select name="orden" id="orden" class="filter-input">
+                        <option value="recientes">Más recientes</option>
+                        <option value="precio_asc">Precio: Menor a Mayor</option>
+                        <option value="precio_desc">Precio: Mayor a Menor</option>
+                        <option value="anio_desc">Año: Más Nuevos</option>
+                        <option value="kilometraje_asc">Menor Kilometraje</option>
+                    </select>
+                </div>
+
+                <!-- Botones -->
+                <div class="filter-group search-btn-container" style="display: flex; gap: 8px;">
+                    <button type="submit" class="filter-submit-btn" style="flex: 2;"><i class="fa fa-filter"></i> Filtrar</button>
+                    <button type="button" id="resetFiltersBtn" class="filter-submit-btn" style="flex: 1; background: #333;" title="Restablecer"><i class="fa fa-undo"></i></button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Barra de estado y selector de moneda -->
+        <div class="currency-toggle-wrapper">
+            <div id="resultsSummary" style="font-size: 0.95rem; color: var(--text-gray);">
+                <i class="fa fa-spinner fa-spin"></i> Conectando con inventario...
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 0.85rem; color: var(--text-gray); font-weight: 600;">Moneda:</span>
+                <div class="currency-switch">
+                    <button type="button" class="currency-btn active" id="btnCurrUSD">USD ($)</button>
+                    <button type="button" class="currency-btn" id="btnCurrRD">RD$</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grid de Vehículos -->
+        <div class="vehicles-grid" id="vehiclesGrid">
+            <!-- 3 Tarjetas de carga temporal tipo skeleton -->
+            <div class="skeleton-loader"></div>
+            <div class="skeleton-loader"></div>
+            <div class="skeleton-loader"></div>
+        </div>
+
+        <!-- Paginación -->
+        <div class="pagination-container" id="paginationContainer" style="display: none;">
+            <!-- Generado dinámicamente -->
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3 id="footerDealerName">EMILIANO CLC</h3>
+                <p id="footerDealerDesc">Importadores directos de vehículos nuevos y usados con la mayor calidad y garantía del mercado.</p>
+            </div>
+            <div class="footer-col">
+                <h3>Enlaces Rápidos</h3>
+                <ul>
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="inventory.html">Inventario</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Contacto</h3>
+                <p><i class="fa fa-map-marker-alt"></i> <span id="footerAddress">Ubicados Sto. Dgo. Norte</span></p>
+                <p style="margin-top: 10px;"><i class="fa fa-phone"></i> <span id="footerPhone">(809) 828-1404</span></p>
+                <p style="margin-top: 10px;"><i class="fa fa-envelope"></i> <span id="footerEmail">ventas@emilianoclc.com</span></p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; <span id="currentYear"></span> EMILIANO CLC AUTO IMPORT. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/inventory.js"></script>
+</body>
+</html>

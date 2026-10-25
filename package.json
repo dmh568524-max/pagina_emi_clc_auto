@@ -1,0 +1,18 @@
+{
+  "name": "pagina-emi-clc-auto",
+  "version": "2.0.0",
+  "description": "Sitio web de EMILIANO CLC AUTO IMPORT optimizado para Vercel y conectado con endpoint API de inventario en tiempo real",
+  "scripts": {
+    "dev": "npx serve .",
+    "start": "npx serve ."
+  },
+  "keywords": [
+    "dealer",
+    "cars",
+    "inventory",
+    "api",
+    "vercel"
+  ],
+  "author": "EMILIANO CLC AUTO IMPORT",
+  "license": "MIT"
+}

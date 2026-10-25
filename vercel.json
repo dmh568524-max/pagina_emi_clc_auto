@@ -1,0 +1,22 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/index.php", "destination": "/index.html" },
+    { "source": "/inventory.php", "destination": "/inventory.html" },
+    { "source": "/vehicle_details.php", "destination": "/vehicle_details.html" },
+    { "source": "/inventory", "destination": "/inventory.html" },
+    { "source": "/vehicle_details", "destination": "/vehicle_details.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(css|js|imagenes|uploads)/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ]
+}

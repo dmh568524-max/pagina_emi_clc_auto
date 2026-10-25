@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Vehículo | EMILIANO CLC AUTO IMPORT</title>
+    <meta name="description" content="Detalles, equipamiento y precio exclusivo en EMILIANO CLC AUTO IMPORT.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .price-badge-container {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 25px;
+        }
+        .price-usd-main {
+            font-size: 2.3rem;
+            font-weight: 800;
+            color: var(--red-primary);
+            line-height: 1.1;
+        }
+        .price-rd-secondary {
+            font-size: 1.15rem;
+            color: var(--text-gray);
+            font-weight: 600;
+        }
+        .rate-tag {
+            font-size: 0.75rem;
+            background: #222;
+            padding: 3px 8px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            display: inline-block;
+            margin-top: 4px;
+            color: #ccc;
+        }
+        .related-cars-section {
+            margin-top: 80px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 40px;
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-gray);
+            font-size: 0.95rem;
+            margin-bottom: 25px;
+            transition: var(--transition);
+        }
+        .back-link:hover {
+            color: var(--red-primary);
+            transform: translateX(-4px);
+        }
+        .skeleton-block {
+            background: #181818;
+            border-radius: 8px;
+            min-height: 450px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header / Navbar -->
+    <header>
+        <div class="nav-container">
+            <a href="index.html" class="logo">EMILIANO <span>CLC AUTO IMPORT</span></a>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Inicio</a></li>
+                <li><a href="inventory.html" class="nav-link active">Inventario</a></li>
+            </ul>
+            <a href="https://wa.me/18098281404" target="_blank" class="btn-contact" id="navWaBtn">
+                <i class="fab fa-whatsapp"></i> Contáctanos
+            </a>
+        </div>
+    </header>
+
+    <!-- Contenedor Principal de Detalles -->
+    <main class="section" style="padding-top: 120px;">
+        <a href="inventory.html" class="back-link"><i class="fa fa-arrow-left"></i> Volver al inventario completo</a>
+
+        <!-- Contenedor cargando -->
+        <div id="loadingDetailsContainer" class="skeleton-block">
+            <div style="text-align: center;">
+                <i class="fa fa-spinner fa-spin" style="font-size: 2.5rem; color: var(--red-primary); margin-bottom: 15px;"></i>
+                <h3>Cargando detalles del vehículo desde el endpoint...</h3>
+            </div>
+        </div>
+
+        <!-- Contenedor de Error / No encontrado -->
+        <div id="errorDetailsContainer" style="display: none; text-align: center; padding: 60px; border: 1px dashed var(--border-color); border-radius: 8px;">
+            <i class="fa fa-exclamation-triangle" style="font-size: 3rem; color: var(--red-primary); margin-bottom: 15px;"></i>
+            <h2>Vehículo no encontrado</h2>
+            <p style="color: var(--text-gray); margin-top: 10px;">Es posible que el vehículo ya haya sido vendido o el identificador sea incorrecto.</p>
+            <a href="inventory.html" class="btn-primary" style="display: inline-block; margin-top: 25px;"><i class="fa fa-car"></i> Ver Vehículos Disponibles</a>
+        </div>
+
+        <!-- Ficha de Detalles (Oculta hasta cargar) -->
+        <div class="detail-container" id="carDetailsContent" style="display: none;">
+            
+            <!-- Columna Izquierda: Galería e Información General -->
+            <div>
+                <div class="gallery-main">
+                    <img src="" alt="Vehículo" id="main-view-image">
+                </div>
+
+                <!-- Miniaturas de la Galería -->
+                <div class="gallery-thumbs" id="galleryThumbs">
+                    <!-- Miniaturas inyectadas por JS -->
+                </div>
+
+                <!-- Ficha Técnica -->
+                <div style="margin-top: 40px;">
+                    <h2 style="border-bottom: 2px solid var(--red-primary); padding-bottom: 10px; text-transform: uppercase;">Ficha Técnica</h2>
+                    <table class="specs-table">
+                        <tr>
+                            <td>Marca</td>
+                            <td id="detailMarca">-</td>
+                        </tr>
+                        <tr>
+                            <td>Modelo</td>
+                            <td id="detailModelo">-</td>
+                        </tr>
+                        <tr>
+                            <td>Año</td>
+                            <td id="detailAnio">-</td>
+                        </tr>
+                        <tr>
+                            <td>Color</td>
+                            <td id="detailColor">-</td>
+                        </tr>
+                        <tr>
+                            <td>Transmisión</td>
+                            <td id="detailTransmision">-</td>
+                        </tr>
+                        <tr>
+                            <td>Combustible</td>
+                            <td id="detailCombustible">-</td>
+                        </tr>
+                        <tr>
+                            <td>Kilometraje</td>
+                            <td id="detailKilometraje">- km</td>
+                        </tr>
+                        <tr>
+                            <td>Tipo / Carrocería</td>
+                            <td id="detailTipo">-</td>
+                        </tr>
+                        <tr>
+                            <td>Estado</td>
+                            <td id="detailEstado" style="text-transform: capitalize; color: #2ecc71; font-weight: 700;">Disponible</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Descripción -->
+                <div style="margin-top: 40px;" id="descContainer">
+                    <h2 style="border-bottom: 2px solid var(--red-primary); padding-bottom: 10px; text-transform: uppercase; margin-bottom: 15px;">Descripción del Vehículo</h2>
+                    <p id="detailDescripcion" style="color: var(--text-gray); white-space: pre-line; line-height: 1.8;">
+                        Sin descripción adicional.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Columna Derecha: Sidebar de Compra y Contacto -->
+            <div class="detail-sidebar">
+                <span id="detailBadge" style="background: var(--red-primary); color: white; padding: 4px 10px; font-size: 0.75rem; font-weight: 800; border-radius: 4px; text-transform: uppercase; display: inline-block; margin-bottom: 10px;">DISPONIBLE</span>
+                <h1 id="detailTitle" style="font-size: 2rem; font-weight: 800; text-transform: uppercase; margin-bottom: 10px;">-</h1>
+                <p id="detailSubtitle" style="color: var(--text-gray); font-size: 1.1rem; margin-bottom: 20px;">-</p>
+                
+                <div class="price-badge-container">
+                    <div class="price-usd-main" id="detailPriceUSD">$0.00</div>
+                    <div class="price-rd-secondary" id="detailPriceRD">RD$ 0</div>
+                    <div class="rate-tag" id="detailRateTag">Tasa de cambio: 1 USD = RD$ 59.00</div>
+                </div>
+
+                <div style="border-top: 1px solid var(--border-color); padding-top: 20px; margin-top: 20px;">
+                    <h4 style="text-transform: uppercase; margin-bottom: 10px;"><i class="fab fa-whatsapp" style="color: #25d366;"></i> ¿Te interesa este vehículo?</h4>
+                    <p style="color: var(--text-gray); font-size: 0.9rem; margin-bottom: 20px;">
+                        Comunícate directamente con nuestro equipo de ventas a través del botón de abajo. Te enviaremos información de financiamiento y fotos adicionales de inmediato.
+                    </p>
+                    
+                    <a href="#" id="detailWaBtn" target="_blank" class="btn-whatsapp">
+                        <i class="fab fa-whatsapp"></i> Preguntar por WhatsApp
+                    </a>
+
+                    <div style="margin-top: 15px; text-align: center;">
+                        <a href="tel:8098281404" id="detailPhoneBtn" style="color: var(--text-gray); font-size: 0.9rem; display: inline-flex; align-items: center; gap: 6px;">
+                            <i class="fa fa-phone"></i> O llámanos al (809) 828-1404
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Sección de Vehículos Relacionados -->
+        <div class="related-cars-section" id="relatedCarsSection" style="display: none;">
+            <div class="section-title" style="margin-bottom: 30px; text-align: left;">
+                <h3>Vehículos <span>Sugeridos</span></h3>
+                <p>Otras opciones que podrían interesarte</p>
+            </div>
+            <div class="vehicles-grid" id="relatedCarsGrid">
+                <!-- Inyectado por JS -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3 id="footerDealerName">EMILIANO CLC</h3>
+                <p id="footerDealerDesc">Importadores directos de vehículos nuevos y usados con la mayor calidad y garantía del mercado.</p>
+            </div>
+            <div class="footer-col">
+                <h3>Enlaces Rápidos</h3>
+                <ul>
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="inventory.html">Inventario</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Contacto</h3>
+                <p><i class="fa fa-map-marker-alt"></i> <span id="footerAddress">Ubicados Sto. Dgo. Norte</span></p>
+                <p style="margin-top: 10px;"><i class="fa fa-phone"></i> <span id="footerPhone">(809) 828-1404</span></p>
+                <p style="margin-top: 10px;"><i class="fa fa-envelope"></i> <span id="footerEmail">ventas@emilianoclc.com</span></p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; <span id="currentYear"></span> EMILIANO CLC AUTO IMPORT. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/vehicle-details.js"></script>
+</body>
+</html>
